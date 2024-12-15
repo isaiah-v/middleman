@@ -1,10 +1,9 @@
-package org.ivcode.middleman.config
+package org.ivcode.middleman.server.config
 
 import okhttp3.Dns
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import org.ivcode.middleman.util.OverrideDns
-import org.springframework.beans.factory.annotation.Qualifier
+import okhttp3.logging.HttpLoggingInterceptor
+import org.ivcode.middleman.server.util.OverrideDns
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,12 +14,13 @@ class OkHttpConfig {
 
     @Bean
     fun createHttpClient(
-        dns: Dns,
-        @Qualifier("logger") loggingInterceptor: Interceptor
+        dns: Dns
     ): OkHttpClient =
         OkHttpClient.Builder()
             .dns(dns)
-            .addInterceptor(loggingInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .build()
 
     @Bean
@@ -28,7 +28,7 @@ class OkHttpConfig {
         @Value("\${okhttp.dns.primary}") primary: String,
         @Value("\${okhttp.dns.secondary}") secondary: String
     ): Dns {
-        return OverrideDns(
+        return OverrideDns (
             primary = Inet4Address.getByName(primary),
             secondary = Inet4Address.getByName(secondary),
         )

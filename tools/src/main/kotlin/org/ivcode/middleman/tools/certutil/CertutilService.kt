@@ -1,5 +1,7 @@
 package org.ivcode.middleman.tools.certutil
 
+import org.ivcode.middleman.tools.utils.CmdParser
+import org.ivcode.middleman.tools.utils.exec
 import java.io.InputStream
 
 /**
@@ -111,70 +113,50 @@ class CertutilService {
         return cmd.exec(HashFileCmdParser())
     }
 
-
-    private fun List<String>.exec() {
-        println(this.joinToString(" "))
-
-        val process = ProcessBuilder(*(this.toTypedArray()))
-            .inheritIO()
-            .start()
-
-
-        //val output = process.inputStream.bufferedReader().readText()
-        val error = process.errorStream.bufferedReader().readText()
-
-        val code = process.waitFor()
-
-        if(code != 0) {
-            throw RuntimeException(error)
+    /**
+     * Displays information about a certificate or CRL.
+     *
+     * @param user Use the HKEY_CURRENT_USER keys or certificate store.
+     * @param enterprise Use the local machine enterprise registry certificate store.
+     * @param service Use service certificate store.
+     * @param groupPolicy Use the group policy certificate store.
+     */
+    fun store(
+        user: Boolean? = null,
+        enterprise: Boolean? = null,
+        service: Boolean? = null,
+        groupPolicy: Boolean? = null,
+        certificateStoreName: String? = null
+    ) {
+        val cmd = mutableListOf("certutil")
+        if(user==true) {
+            cmd.add("-user")
         }
-    }
-
-    private fun Array<String>.exec(): Int {
-        val process = ProcessBuilder(*this)
-            .inheritIO()
-            .start()
-
-        return process.waitFor()
-    }
-
-    private fun <T> List<String>.exec(parser: CmdParser<T>): T {
-        val process = ProcessBuilder(*(this.toTypedArray()))
-            .start()
-
-        val value = parser.parse(process.inputStream)
-        val error = StringCmdParser().parse(process.errorStream)
-
-        val code = process.waitFor()
-
-        if(code != 0) {
-            throw RuntimeException(error)
+        if(enterprise==true) {
+            cmd.add("-enterprise")
+        }
+        if(service==true) {
+            cmd.add("-service")
+        }
+        if(groupPolicy==true) {
+            cmd.add("-GroupPolicy")
         }
 
-        return value
+        cmd.add("-store")
+
+        if(certificateStoreName!=null) {
+            cmd.add(certificateStoreName)
+        }
+
+        cmd.exec()
     }
+
 }
 
 
-private interface CmdParser<T> {
-    fun parse(inputStream: InputStream): T
-}
 
-private class StringCmdParser : CmdParser<String> {
-    override fun parse(inputStream: InputStream): String {
-        inputStream.bufferedReader().use {
-            return it.readText()
-        }
-    }
-}
 
-private class StringListCmdParser : CmdParser<List<String>> {
-    override fun parse(inputStream: InputStream): List<String> {
-        inputStream.bufferedReader().use {
-            return it.readLines()
-        }
-    }
-}
+
 
 private class HashFileCmdParser : CmdParser<String> {
     override fun parse(inputStream: InputStream): String {

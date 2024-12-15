@@ -1,4 +1,4 @@
-package org.ivcode.middleman.controller
+package org.ivcode.middleman.server.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import okhttp3.Headers
@@ -18,7 +18,7 @@ class MiddleManController(
 ) {
 
     @RequestMapping(value = ["/**"])
-    fun all(request: HttpServletRequest): ResponseEntity<String> = httpClient
+    fun all(request: HttpServletRequest): ResponseEntity<ByteArray> = httpClient
         .newCall(request.asRequest())
         .execute()
         .asResponseEntity()
@@ -26,19 +26,23 @@ class MiddleManController(
     private fun HttpServletRequest.asRequest(): Request {
         // url
         val builder = Request.Builder()
-        builder.url(this.requestURI)
+        builder.url(this.requestURL.toString())
 
         // headers
-        this.headerNames.asIterator().forEach {name ->
+        this.headerNames.asIterator().forEach { name ->
             this.getHeaders(name).iterator().forEach { value ->
                 builder.addHeader(name, value)
             }
         }
 
         // body and method
-        val contentType = this.contentType?.toMediaTypeOrNull()
-        val body = this.reader.readText().toRequestBody(contentType)
-        builder.method(this.method, body)
+        if (this.method == "GET") {
+            builder.get()
+        } else {
+            val contentType = this.contentType?.toMediaTypeOrNull()
+            val body = this.reader.readText().toRequestBody(contentType)
+            builder.method(this.method, body)
+        }
 
         return builder.build()
     }
@@ -46,14 +50,14 @@ class MiddleManController(
     /**
      * Covert OkHttp [Response] to Springframework [ResponseEntity]
      */
-    private fun Response.asResponseEntity(): ResponseEntity<String> {
+    private fun Response.asResponseEntity(): ResponseEntity<ByteArray> {
         val builder = ResponseEntity.status(this.code)
         this.use {
             builder.headers(this.headers.asHttpHeaders())
 
             val body = it.body
             if(body != null) {
-                builder.body(body.string())
+                return builder.body(body.bytes())
             }
         }
 
