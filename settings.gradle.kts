@@ -16,3 +16,7 @@ rootProject.name = "middleman"
 include("server")
 include("tools")
 include("scripts")
+
+project(":server").name = "middleman-server"
+project(":tools").name = "middleman-tools"
+project(":scripts").name = "middleman-scripts"

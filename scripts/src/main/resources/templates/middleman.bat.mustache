@@ -1,0 +1,20 @@
+@echo off
+setlocal
+
+if defined JAVA_HOME (
+    set COMMAND=%JAVA_HOME%\bin\java
+) else (
+    set COMMAND=java
+    where %COMMAND% >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo on
+        echo JAVA_HOME is not set and %COMMAND% does not exist
+        echo off
+        exit /b 1
+    )
+)
+
+set LIBS_PATH=%~dp0{{winLibsPath}}
+"%COMMAND%" -D"middleman.server=%LIBS_PATH%\{{serverJar}}" -jar "%LIBS_PATH%\{{toolsJar}}" %*
+
+endlocal

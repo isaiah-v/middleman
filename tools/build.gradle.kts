@@ -1,9 +1,7 @@
 plugins {
     kotlin("jvm") version "2.0.21"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
-
-group = "org.ivcode"
-version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -18,6 +16,19 @@ dependencies {
     implementation("commons-codec:commons-codec:1.17.1")
 
     testImplementation(kotlin("test"))
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveClassifier.set("")
+    mergeServiceFiles()
+    manifest {
+        attributes(
+            "Main-Class" to "org.ivcode.middleman.tools.cmd.MainKt"
+        )
+    }
+}
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 tasks.test {
