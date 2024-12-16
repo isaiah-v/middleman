@@ -46,3 +46,34 @@ your devices.
 Note: This should work for most applications, but some include additional security measures (e.g., certificate pinning),
 which may block this approach.
 
+## Building Middleman
+To build Middleman, you need to have Java 21+ installed on your system. Run the following command to build the project:
+
+Build Middleman:
+```shell
+git clone https://github.com/isaiah-v/middleman.git
+cd middleman
+.\gradlew build
+```
+
+Run Middleman:
+```shell
+# Navigate to the build directory
+cd build\bin
+
+# Self-signed certificate for HTTPS traffic
+middleman keystore sign google.com www.google.com
+
+# Export the certificate
+middleman keystore export
+
+# Install the certificate in the system's trusted store
+middleman ca install
+
+# Start the server
+middleman server start
+```
+
+Notes:
+- Currently, Middleman is only tested on Windows. The server probably works on other platforms, but the scripts to
+  generate certificates and configure the server are Windows-specific.

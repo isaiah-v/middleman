@@ -1,6 +1,6 @@
 package org.ivcode.middleman.tools.cmd.impl
 
-import org.ivcode.middleman.tools.cmd.impl.keystore.NewCommand
+import org.ivcode.middleman.tools.cmd.impl.keystore.SignCommand
 import org.ivcode.middleman.tools.cmd.impl.keystore.ExportCommand
 import org.ivcode.middleman.tools.cmd.lib.Command
 import org.ivcode.middleman.tools.cmd.lib.DirectoryCommand
@@ -24,7 +24,7 @@ fun createCmd(): Command = DirectoryCommand (
 private fun createKeystoreCommand(): Command = DirectoryCommand(
     "Keystore Tools",
     mapOf(
-        "new" to NewCommand(),
+        "sign" to SignCommand(),
         "export" to ExportCommand(),
     )
 )
@@ -32,9 +32,9 @@ private fun createKeystoreCommand(): Command = DirectoryCommand(
 private fun createCACommand(): Command = DirectoryCommand (
     "Certificate Authority Tools",
     mapOf(
-        "ls" to org.ivcode.middleman.tools.cmd.impl.ca.win.ListCommand(),
-        "add" to org.ivcode.middleman.tools.cmd.impl.ca.win.AddCommand(),
-        "rm" to org.ivcode.middleman.tools.cmd.impl.ca.win.RemoveCommand()
+        "install" to org.ivcode.middleman.tools.cmd.impl.ca.win.InstallCommand(),
+        "list" to org.ivcode.middleman.tools.cmd.impl.ca.win.ListCommand(),
+        "delete" to org.ivcode.middleman.tools.cmd.impl.ca.win.DeleteCommand(),
     )
 )
 

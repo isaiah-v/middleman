@@ -6,7 +6,7 @@ import org.ivcode.middleman.tools.cmd.lib.Arguments
 import org.ivcode.middleman.tools.cmd.lib.Command
 import org.ivcode.middleman.tools.cmd.lib.parseInto
 
-class RemoveCommand: Command {
+class DeleteCommand: Command {
     override fun exec(args: Arguments) = parseInto(args, ::Args).run {
         CertutilService().delStore (
             user = true,

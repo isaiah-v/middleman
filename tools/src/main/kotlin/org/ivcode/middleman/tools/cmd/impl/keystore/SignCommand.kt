@@ -8,8 +8,8 @@ import org.ivcode.middleman.tools.cmd.lib.Command
 import org.ivcode.middleman.tools.keytool.*
 import java.io.File
 
-class NewCommand: Command {
-    override fun exec(args: Arguments) = parseInto(args, NewCommand::Args).run {
+class SignCommand: Command {
+    override fun exec(args: Arguments) = parseInto(args, SignCommand::Args).run {
         if(domains.isEmpty()) {
             throw IllegalArgumentException("domain is required")
         }

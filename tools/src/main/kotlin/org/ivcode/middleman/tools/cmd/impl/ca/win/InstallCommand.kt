@@ -8,7 +8,7 @@ import org.ivcode.middleman.tools.cmd.lib.Arguments
 import org.ivcode.middleman.tools.cmd.lib.Command
 import java.io.File
 
-class AddCommand: Command {
+class InstallCommand: Command {
     override fun exec(args: Arguments) = parseInto(args, ::Args).run {
         CertutilService().addStore(
             user = true,
