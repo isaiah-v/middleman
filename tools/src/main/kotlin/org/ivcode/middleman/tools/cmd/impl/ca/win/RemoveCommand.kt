@@ -1,38 +1,34 @@
 package org.ivcode.middleman.tools.cmd.impl.ca.win
 
 import com.xenomachina.argparser.ArgParser
-import com.xenomachina.argparser.default
 import org.ivcode.middleman.tools.certutil.CertutilService
 import org.ivcode.middleman.tools.cmd.impl.DEFAULT_ALIAS
 import org.ivcode.middleman.tools.cmd.impl.DEFAULT_DIRECTORY
 import org.ivcode.middleman.tools.cmd.impl.DEFAULT_KEYSTORE_FILENAME
 import org.ivcode.middleman.tools.cmd.impl.DEFAULT_KEYSTORE_PASSWORD
-import org.ivcode.middleman.tools.cmd.lib.parseInto
 import org.ivcode.middleman.tools.cmd.lib.Arguments
 import org.ivcode.middleman.tools.cmd.lib.Command
+import org.ivcode.middleman.tools.cmd.lib.parseInto
+import org.ivcode.middleman.tools.keytool.getSignatureHex
 import org.ivcode.middleman.tools.keytool.loadKeystore
-import org.ivcode.middleman.tools.keytool.writeCertificateToFile
 import java.io.File
 
-class InstallCommand: Command {
-    override fun exec(args: Arguments): Unit = parseInto(args, ::Args).run {
+class RemoveCommand: Command {
+    override fun exec(args: Arguments) = parseInto(args, ::Args).run {
         val keystoreFile = File(directory, keystoreFilename)
         val keystore = loadKeystore(keystoreFile.absolutePath, keystorePassword)
 
-        val certFile = File(directory, "${alias}.cer")
-        keystore.writeCertificateToFile(alias, certFile.absolutePath)
+        val certId = keystore.getSignatureHex(alias)
 
-        CertutilService().addStore(
+        CertutilService().delStore (
             user = true,
             certificateStoreName = "Root",
-            inFile = certFile.absolutePath
+            certID = certId
         )
-
-        certFile.delete()
     }
 
     override fun description(): String {
-        return "Add a new certificate to the CA"
+        return "Remove a certificate from the CA"
     }
 
     class Args(parser: ArgParser) {

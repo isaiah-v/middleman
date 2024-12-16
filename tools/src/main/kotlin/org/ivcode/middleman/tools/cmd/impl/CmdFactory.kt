@@ -1,9 +1,13 @@
 package org.ivcode.middleman.tools.cmd.impl
 
 import org.ivcode.middleman.tools.cmd.impl.keystore.SignCommand
-import org.ivcode.middleman.tools.cmd.impl.keystore.ExportCommand
 import org.ivcode.middleman.tools.cmd.lib.Command
 import org.ivcode.middleman.tools.cmd.lib.DirectoryCommand
+
+const val DEFAULT_DIRECTORY = "./certs"
+const val DEFAULT_KEYSTORE_FILENAME = "keystore.p12"
+const val DEFAULT_KEYSTORE_PASSWORD = "password"
+const val DEFAULT_ALIAS = "cacert"
 
 fun createCmd(): Command = DirectoryCommand (
     "Middleman Tools",
@@ -25,7 +29,6 @@ private fun createKeystoreCommand(): Command = DirectoryCommand(
     "Keystore Tools",
     mapOf(
         "sign" to SignCommand(),
-        "export" to ExportCommand(),
     )
 )
 
@@ -33,8 +36,7 @@ private fun createCACommand(): Command = DirectoryCommand (
     "Certificate Authority Tools",
     mapOf(
         "install" to org.ivcode.middleman.tools.cmd.impl.ca.win.InstallCommand(),
-        "list" to org.ivcode.middleman.tools.cmd.impl.ca.win.ListCommand(),
-        "delete" to org.ivcode.middleman.tools.cmd.impl.ca.win.DeleteCommand(),
+        "remove" to org.ivcode.middleman.tools.cmd.impl.ca.win.RemoveCommand(),
     )
 )
 

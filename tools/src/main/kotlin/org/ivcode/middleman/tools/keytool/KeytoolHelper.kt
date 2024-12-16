@@ -1,22 +1,19 @@
 package org.ivcode.middleman.tools.keytool
 
 import org.bouncycastle.asn1.x509.*
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.security.KeyStore
-
-import java.security.cert.X509Certificate;
-import java.math.BigInteger
-import java.util.*
-import javax.security.auth.x500.X500Principal
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder
+import org.bouncycastle.jcajce.BCFKSLoadStoreParameter.SignatureAlgorithm
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.FileWriter
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.SecureRandom
+import java.math.BigInteger
+import java.security.*
+import java.security.cert.X509Certificate
+import java.util.*
+import javax.security.auth.x500.X500Principal
 
 
 fun createKeystore(): KeyStore = KeyStore.getInstance("PKCS12").apply {
@@ -63,6 +60,23 @@ fun createPrincipal (
     }
 
     return X500Principal(sb.toString())
+}
+
+fun KeyStore.getSignatureHex(alias: String, algorithm: String = "SHA-1"): String {
+    val cert = this.getCertificate(alias) as X509Certificate
+
+    val sha1Digest = MessageDigest.getInstance(algorithm)
+    val certHash = sha1Digest.digest(cert.encoded)
+
+    return bytesToHex(certHash)
+}
+
+private fun bytesToHex(bytes: ByteArray): String {
+    val sb = java.lang.StringBuilder()
+    for (b in bytes) {
+        sb.append(String.format("%02x", b))
+    }
+    return sb.toString()
 }
 
 fun KeyStore.writeCertificateToFile(alias: String, path: String = "$alias.crt") {

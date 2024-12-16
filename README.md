@@ -64,14 +64,14 @@ cd build\bin
 # Self-signed certificate for HTTPS traffic
 middleman keystore sign google.com www.google.com
 
-# Export the certificate
-middleman keystore export
-
-# Install the certificate in the system's trusted store
+# Add the certificate to the system's trusted store
 middleman ca install
 
-# Start the server
+# Start the server (Crtl+C to stop)
 middleman server start
+
+# Remove the certificate from the system's trusted store
+middleman ca remove
 ```
 
 Notes:

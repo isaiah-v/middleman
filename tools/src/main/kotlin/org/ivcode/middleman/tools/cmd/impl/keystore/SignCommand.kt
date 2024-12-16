@@ -2,6 +2,10 @@ package org.ivcode.middleman.tools.cmd.impl.keystore
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
+import org.ivcode.middleman.tools.cmd.impl.DEFAULT_ALIAS
+import org.ivcode.middleman.tools.cmd.impl.DEFAULT_DIRECTORY
+import org.ivcode.middleman.tools.cmd.impl.DEFAULT_KEYSTORE_FILENAME
+import org.ivcode.middleman.tools.cmd.impl.DEFAULT_KEYSTORE_PASSWORD
 import org.ivcode.middleman.tools.cmd.lib.parseInto
 import org.ivcode.middleman.tools.cmd.lib.Arguments
 import org.ivcode.middleman.tools.cmd.lib.Command
@@ -37,25 +41,10 @@ class SignCommand: Command {
     private class Args (
         parser: ArgParser
     ) {
-        val directory by parser.storing(
-            "-d", "--dir",
-            help = "keystore directory path"
-        ).default("./certs")
-
-        val keystoreFilename by parser.storing(
-            "-n", "--keyname",
-            help = "keystore filename"
-        ).default("keystore.p12")
-
-        val keystorePassword by parser.storing(
-            "-p", "--keypass",
-            help = "keystore password"
-        ).default("password")
-
-        val alias by parser.storing(
-            "-a", "--alias",
-            help = "The alias of the key"
-        ).default("cacert")
+        val directory = DEFAULT_DIRECTORY
+        val keystoreFilename = DEFAULT_KEYSTORE_FILENAME
+        val keystorePassword = DEFAULT_KEYSTORE_PASSWORD
+        val alias = DEFAULT_ALIAS
 
         val domains by parser.positionalList(
             "DOMAINS",

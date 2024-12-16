@@ -1,8 +1,6 @@
 package org.ivcode.middleman.tools.certutil
 
-import org.ivcode.middleman.tools.utils.CmdParser
 import org.ivcode.middleman.tools.utils.exec
-import java.io.InputStream
 
 /**
  * A service to interact with the certutil tool on Windows
@@ -93,84 +91,6 @@ class CertutilService {
         cmd.add(certID)
 
         cmd.exec()
-    }
-
-    /**
-     * Generates and displays a cryptographic hash over a file.
-     */
-    fun hashFile (
-        inFile: String,
-        hashAlgorithm: String? = null,
-    ): String {
-        val cmd = mutableListOf("certutil")
-        cmd.add("-hashfile")
-        cmd.add(inFile)
-
-        if(hashAlgorithm!=null) {
-            cmd.add(hashAlgorithm)
-        }
-
-        return cmd.exec(HashFileCmdParser())
-    }
-
-    /**
-     * Displays information about a certificate or CRL.
-     *
-     * @param user Use the HKEY_CURRENT_USER keys or certificate store.
-     * @param enterprise Use the local machine enterprise registry certificate store.
-     * @param service Use service certificate store.
-     * @param groupPolicy Use the group policy certificate store.
-     */
-    fun store(
-        user: Boolean? = null,
-        enterprise: Boolean? = null,
-        service: Boolean? = null,
-        groupPolicy: Boolean? = null,
-        certificateStoreName: String? = null
-    ) {
-        val cmd = mutableListOf("certutil")
-        if(user==true) {
-            cmd.add("-user")
-        }
-        if(enterprise==true) {
-            cmd.add("-enterprise")
-        }
-        if(service==true) {
-            cmd.add("-service")
-        }
-        if(groupPolicy==true) {
-            cmd.add("-GroupPolicy")
-        }
-
-        cmd.add("-store")
-
-        if(certificateStoreName!=null) {
-            cmd.add(certificateStoreName)
-        }
-
-        cmd.exec()
-    }
-
-}
-
-
-
-
-
-
-private class HashFileCmdParser : CmdParser<String> {
-    override fun parse(inputStream: InputStream): String {
-        inputStream.bufferedReader().use {
-            val lines = it
-                .readLines()
-                .filter { line -> line.isNotBlank() }
-
-            if (lines.size < 2) {
-                throw IllegalArgumentException("Unexpected output format: Expected at least two non-blank lines, but found ${lines.size}.")
-            }
-
-            return lines[1].trim() // Return the second line
-        }
     }
 }
 
