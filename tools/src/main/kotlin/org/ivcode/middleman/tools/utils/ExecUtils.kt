@@ -35,6 +35,16 @@ fun List<String>.exec() {
 }
 
 /**
+ * Executes a that isn't expected to exit, and will execute a block of code when it does.
+ */
+fun List<String>.exec(onExit: ()->Unit) {
+    Runtime.getRuntime().addShutdownHook(Thread(onExit))
+    exec()
+
+    throw RuntimeException("Unexpected Exit")
+}
+
+/**
  * Executes a command and returns the output.
  */
 fun <T> List<String>.exec(parser: CmdParser<T>): T {
